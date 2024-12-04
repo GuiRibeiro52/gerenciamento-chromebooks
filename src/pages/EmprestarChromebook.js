@@ -9,16 +9,19 @@ const EmprestarChromebook = () => {
   const [professor, setProfessor] = useState(null); // Professor selecionado
   const [selectedChromebook, setSelectedChromebook] = useState(null); 
 
-  // Buscar Chromebooks disponíveis
+  // Função para buscar Chromebooks disponíveis
+  const fetchChromebooks = async () => {
+    const chromebooksSnapshot = await getDocs(collection(db, 'chromebooks'));
+    const chromebooksList = chromebooksSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    // Filtra apenas os Chromebooks com status "Disponível"
+    setChromebooks(chromebooksList.filter(chromebook => chromebook.status === 'Disponível'));
+  };
+
+  // Buscar Chromebooks disponíveis ao carregar a página
   useEffect(() => {
-    const fetchChromebooks = async () => {
-      const chromebooksSnapshot = await getDocs(collection(db, 'chromebooks'));
-      const chromebooksList = chromebooksSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setChromebooks(chromebooksList.filter(chromebook => chromebook.status === 'Disponível'));
-    };
     fetchChromebooks();
   }, []);
 
@@ -35,6 +38,7 @@ const EmprestarChromebook = () => {
     fetchProfessores();
   }, []);
 
+  // Lidar com o empréstimo do Chromebook
   const handleEmprestimo = async () => {
     if (!selectedChromebook || !professor) {
       alert('Selecione um Chromebook e um professor.');
@@ -45,7 +49,7 @@ const EmprestarChromebook = () => {
       // Atualiza o status do Chromebook no Firestore para "Emprestado"
       const chromebookRef = doc(db, 'chromebooks', selectedChromebook.id);
       
-      // Atualiza o documento com o nome do professor
+      // Atualiza o documento com o nome e o ID do professor
       await updateDoc(chromebookRef, {
         status: 'Emprestado',
         professorNome: professor.nome, // Armazena o nome do professor no Chromebook
@@ -56,6 +60,13 @@ const EmprestarChromebook = () => {
       generateTermoEmprestimo(professor, selectedChromebook);
 
       alert(`Chromebook ${selectedChromebook.serie} emprestado com sucesso!`);
+      
+      // Recarregar a lista de Chromebooks disponíveis após o empréstimo
+      fetchChromebooks();
+      
+      // Limpar as seleções
+      setProfessor(null);
+      setSelectedChromebook(null);
     } catch (error) {
       console.error('Erro ao emprestar o Chromebook: ', error);
       alert('Erro ao realizar o empréstimo.');

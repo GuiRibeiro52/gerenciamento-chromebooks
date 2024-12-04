@@ -2,23 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { getDocs, collection, updateDoc, doc } from 'firebase/firestore';
 import Modal from 'react-modal';
+import generateTermoDevolucao from '../services/generateTermoDevolucao'; // Função para gerar o PDF
 
 const DevolverChromebook = () => {
   const [chromebooks, setChromebooks] = useState([]);
-  const [selectedChromebook, setSelectedChromebook] = useState(null); 
+  const [selectedChromebook, setSelectedChromebook] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false); // Controla a visibilidade do modal
+
+  // Função para buscar Chromebooks emprestados
+  const fetchChromebooks = async () => {
+    const chromebooksSnapshot = await getDocs(collection(db, 'chromebooks'));
+    const chromebooksList = chromebooksSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    // Filtra apenas os Chromebooks com status "Emprestado"
+    setChromebooks(chromebooksList.filter((chromebook) => chromebook.status === 'Emprestado'));
+  };
 
   // Buscar Chromebooks emprestados ao carregar a página
   useEffect(() => {
-    const fetchChromebooks = async () => {
-      const chromebooksSnapshot = await getDocs(collection(db, 'chromebooks'));
-      const chromebooksList = chromebooksSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      // Filtra apenas os Chromebooks com status "Emprestado"
-      setChromebooks(chromebooksList.filter((chromebook) => chromebook.status === 'Emprestado'));
-    };
     fetchChromebooks();
   }, []);
 
@@ -34,9 +37,20 @@ const DevolverChromebook = () => {
       const chromebookRef = doc(db, 'chromebooks', selectedChromebook.id);
       await updateDoc(chromebookRef, { status: 'Disponível' });
 
+      // Gerar o termo de devolução (PDF)
+      generateTermoDevolucao(selectedChromebook);
+
       alert(`Chromebook ${selectedChromebook.serie} devolvido com sucesso!`);
-      setModalIsOpen(false); // Fecha o modal após a devolução
+      
+      // Fechar o modal após a devolução
+      setModalIsOpen(false);
       setSelectedChromebook(null); // Reseta o Chromebook selecionado
+
+      // Recarregar a lista de Chromebooks emprestados automaticamente
+      setTimeout(() => {
+        fetchChromebooks(); // Chama novamente para atualizar a lista
+      },); // Espera 1 segundo para garantir que a devolução foi processada
+
     } catch (error) {
       console.error('Erro ao devolver o Chromebook: ', error);
       alert('Erro ao realizar a devolução.');
@@ -84,10 +98,10 @@ const DevolverChromebook = () => {
               >
                 <td>{chromebook.serie}</td>
                 <td>{chromebook.patrimonio}</td>
-                <td>{chromebook.professorNome || 'Nome do Professor'}</td> {/* Exibe o nome armazenado */}
+                <td>{chromebook.professorNome || 'Nome do Professor'}</td>
                 <td>
                   <button
-                    onClick={() => openModal()} // Abre o modal para confirmação
+                    onClick={openModal} // Abre o modal para confirmação
                     disabled={!selectedChromebook || selectedChromebook.id !== chromebook.id}
                   >
                     Realizar Devolução

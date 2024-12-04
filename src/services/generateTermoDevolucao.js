@@ -12,7 +12,9 @@ const generateTermoDevolucao = (chromebook) => {
   doc.setFontSize(12);
   doc.text(`Número de Série: ${chromebook.serie}`, 20, 30);
   doc.text(`Número de Patrimônio: ${chromebook.patrimonio}`, 20, 40);
-  doc.text(`Professor: ${chromebook.professor || "Nome do Professor"}`, 20, 50);
+  
+  // Garantir que o nome do professor seja exibido corretamente
+  doc.text(`Professor: ${chromebook.professorNome || "Nome do Professor"}`, 20, 50);
 
   // Gerar o PDF no formato padrão ou baixar
   doc.save(`Termo_Devolucao_${chromebook.serie}.pdf`);

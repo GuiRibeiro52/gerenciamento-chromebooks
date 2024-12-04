@@ -44,7 +44,13 @@ const EmprestarChromebook = () => {
     try {
       // Atualiza o status do Chromebook no Firestore para "Emprestado"
       const chromebookRef = doc(db, 'chromebooks', selectedChromebook.id);
-      await updateDoc(chromebookRef, { status: 'Emprestado' });
+      
+      // Atualiza o documento com o nome do professor
+      await updateDoc(chromebookRef, {
+        status: 'Emprestado',
+        professorNome: professor.nome, // Armazena o nome do professor no Chromebook
+        professorId: professor.id,    // Armazena o ID do professor para futura referência
+      });
 
       // Gerar o termo de empréstimo (PDF)
       generateTermoEmprestimo(professor, selectedChromebook);

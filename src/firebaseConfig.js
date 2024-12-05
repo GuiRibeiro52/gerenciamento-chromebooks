@@ -1,8 +1,7 @@
-
+// firebaseConfig.js
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyD_cbkvuZS0k5M90tgZ68AdIFCn1jZAr3g",
@@ -11,32 +10,22 @@ const firebaseConfig = {
   storageBucket: "chromebook-manager-6fd19.firebasestorage.app",
   messagingSenderId: "404220794332",
   appId: "1:404220794332:web:a755ede7f703ca0f016b19",
-  measurementId: "G-8D6M3EBRLL"
+  measurementId: "G-8D6M3EBRLL",
 };
 
-
+// Inicializar o app
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const login = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
-  };
-  
+// Funções de autenticação
+const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
+const register = (email, password) => createUserWithEmailAndPassword(auth, email, password);
+const logout = () => signOut(auth);
+const loginWithGoogle = () => {
+  const provider = new GoogleAuthProvider();
+  return signInWithPopup(auth, provider);
+};
 
-  const register = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-  };
-  
-
-  const logout = () => {
-    return signOut(auth);
-  };
-  
-
-  const loginWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-  };
-  
-  export { db, auth, login, register, logout, loginWithGoogle };
+// Exportando app junto com auth, db e funções auxiliares
+export { app, db, auth, login, register, logout, loginWithGoogle };

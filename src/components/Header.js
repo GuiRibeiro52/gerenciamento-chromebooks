@@ -1,22 +1,22 @@
 import React from "react";
-import useAuth from "../hooks/useAuth"; // Importando o hook customizado corretamente
+import useAuth from "../hooks/useAuth"; 
 
 const Header = () => {
-  const user = useAuth(); // Obtém os dados do usuário logado através do hook useAuth
+  const user = useAuth(); 
 
   return (
     <header className="header">
       <div className="logo">
-        <span>Nome da Escola</span> {/* Aqui você pode substituir pelo logo */}
+        <span>Nome da Escola</span>
       </div>
       <div className="home-link">
         <a href="/home">Home</a>
       </div>
       <div className="user-info">
         {user ? (
-          <span>Bem-vindo, {user.displayName || user.email}</span> // Exibe o nome ou email do usuário
+          <span>Bem-vindo, {user.displayName || user.email}</span> 
         ) : (
-          <span>Não logado</span> // Caso não haja um usuário logado
+          <span>Não logado</span> 
         )}
       </div>
     </header>

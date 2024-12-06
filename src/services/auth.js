@@ -1,10 +1,9 @@
-// services/auth.js
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { app } from "../firebaseConfig"; // Certifique-se de que está importando o app corretamente
+import { app } from "../firebaseConfig"; 
 
 const auth = getAuth(app);
 
-// Função para verificar se o usuário está autenticado
+
 export const isAuthenticated = () => {
   return new Promise((resolve) => {
     onAuthStateChanged(auth, (user) => {
@@ -13,17 +12,17 @@ export const isAuthenticated = () => {
   });
 };
 
-// Função de login
+
 export const login = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user; // Retorna o usuário logado
+    return userCredential.user; 
   } catch (error) {
-    throw new Error(error.message); // Retorna o erro em caso de falha
+    throw new Error(error.message); 
   }
 };
 
-// Função para logout
+
 export const logout = async () => {
   await signOut(auth);
 };

@@ -11,7 +11,7 @@ module.exports = {
         yellow: "#f2d335", 
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'], 
+        poppins: ['Poppins', 'sans-serif'], 
       },
       fontSize: {
         sm: '14px',

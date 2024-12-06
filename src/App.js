@@ -16,7 +16,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginLayout />} />            
-        <Route path="/*" element={<MainLayout />}>
+          <Route path="/*" element={<MainLayout />}>
           <Route path="home" element={<PrivateRoute element={Home} />} />
           <Route path="professores" element={<PrivateRoute element={Professores} />} />
           <Route path="professores/novo" element={<PrivateRoute element={ProfessorForm} />} />
@@ -34,21 +34,19 @@ function App() {
 
 
 function LoginLayout() {
-  return (
-    <div className="container">
+  return (  
       <Routes>
         <Route path="/" element={<Login />} />
-      </Routes>
-    </div>
+      </Routes>    
   );
 }
 
 function MainLayout() {
   return (
-    <div>
-      <Header /> 
-      <div className="main-content">
-        <Outlet /> 
+    <div className="min-h-screen  w-full">
+      <Header />
+      <div className="main-content w-full">
+        <Outlet />
       </div>
     </div>
   );

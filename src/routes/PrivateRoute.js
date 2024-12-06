@@ -1,4 +1,3 @@
-// routes/PrivateRoute.js
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { isAuthenticated } from '../services/auth';
@@ -18,10 +17,10 @@ const PrivateRoute = ({ element: Element, ...rest }) => {
   }, []);
 
   if (!isAuthChecked) {
-    return <div>Loading...</div>; // Pode colocar um loading enquanto verifica a autenticação
+    return <div>Loading...</div>; 
   }
 
-  return isAuthenticatedState ? <Element {...rest} /> : <Navigate to="/" />; // Redireciona se não autenticado
+  return isAuthenticatedState ? <Element {...rest} /> : <Navigate to="/" />; 
 };
 
 export default PrivateRoute;

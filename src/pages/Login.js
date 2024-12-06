@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, loginWithGoogle } from "../firebaseConfig";
-import { FaGoogle } from "react-icons/fa";
+import { login, loginWithGoogle, isEmailAllowed } from "../firebaseConfig"; 
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,44 +9,62 @@ const Login = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      const userCredential = await login(email, password);
+      const user = userCredential.user;
+      
+      
+      if (!isEmailAllowed(user.email)) {
+        throw new Error("Acesso negado. Seu e-mail não tem permissão para acessar.");
+      }
+
+      
       navigate("/home"); 
     } catch (error) {
-      setError("Falha ao autenticar. Verifique seu e-mail e senha.");
+      setError(error.message || "Falha ao autenticar. Verifique seu e-mail e senha.");
     }
   };
 
+  
   const handleGoogleLogin = async () => {
     try {
-      await loginWithGoogle();
+      const user = await loginWithGoogle();
+
+      
+      if (!isEmailAllowed(user.email)) {
+        throw new Error("Acesso negado. Seu e-mail não tem permissão para acessar.");
+      }
+
+      
       navigate("/home"); 
     } catch (error) {
-      setError("Falha ao autenticar com Google.");
+      setError(error.message || "Falha ao autenticar com Google.");
     }
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <div style={{ padding: "20px", border: "1px solid #ccc", borderRadius: "8px" }}>
-        <h2>Login</h2>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        
-        {/* Formulário de login com e-mail e senha */}
-        <form onSubmit={handleLogin}>
-          <div>
-            <label htmlFor="email">E-mail:</label>
+    <div className="flex justify-center items-center min-h-screen bg-yellow w-full font-poppins">
+      <div className="bg-white p-8 rounded-lg shadow-lg sm:w-[90%] md:w-[400px]">
+        <h2 className="font-poppins text-2xl text-center mb-6">Login</h2>
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+        <form onSubmit={handleLogin} className="flex flex-col space-y-4">
+          <div className="flex flex-col">
+            <label htmlFor="email" >E-mail:</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Coloque seu email aqui"
             />
           </div>
-          <div>
+          <div className="flex flex-col">
             <label htmlFor="password">Senha:</label>
             <input
               type="password"
@@ -54,16 +72,24 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Coloque sua senha aqui"
             />
           </div>
-          <button type="submit">Entrar</button>
+          <button type="submit"
+          className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+          >Entrar</button>
         </form>
-        
-        {/* Botão de login com Google */}
-        <div style={{ marginTop: "10px" }}>
-            <button onClick={handleGoogleLogin} style={{ display: "flex", alignItems: "center" }}>
-                <FaGoogle style={{ marginRight: "8px" }} />Entrar com Google
-            </button>
+
+        <div className="flex justify-center mt-4">
+          <button onClick={handleGoogleLogin} className="flex items-center justify-center gap-4 bg-white border border-gray-300 rounded-lg py-2 w-full hover:shadow-md transition duration-300">
+            <FcGoogle size={24}/>Entrar com Google
+          </button>
+        </div>
+
+        <div className="text-center text-black opacity-60 text-sm mt-6">
+          <p>Desenvolvido por <a href="https://www.guilhermeribeiro.dev.br" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-900">Guilherme Ribeiro</a>.</p> 
+          <p>Todos os direitos reservados.</p>
         </div>
       </div>
     </div>

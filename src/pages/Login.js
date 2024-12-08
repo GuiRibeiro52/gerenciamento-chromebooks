@@ -48,7 +48,8 @@ const Login = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-yellow w-full font-poppins">
       <div className="bg-white p-8 rounded-lg shadow-lg sm:w-[90%] md:w-[400px]">
-        <h2 className="font-poppins text-2xl text-center mb-6">Login</h2>
+        <h1 className="text-center mb-4 font-bold text-lg">SISTEMA DE GERENCIAMENTO DE CHROMEBOOKS</h1>
+        <h2 className="text-base text-center mb-6">LOGIN</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={handleLogin} className="flex flex-col space-y-4">
